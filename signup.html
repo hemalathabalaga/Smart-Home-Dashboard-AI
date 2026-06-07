@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Home Setup</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="page-title">🏠 Smart Home Setup</div>
+
+<div class="details-box">
+
+<h2>Enter Home Details</h2>
+
+<input type="number" id="rooms" placeholder="No of Rooms">
+<input type="number" id="lights" placeholder="No of Lights">
+<input type="number" id="fans" placeholder="No of Fans">
+<input type="number" id="ac" placeholder="No of AC">
+<input type="number" id="tv" placeholder="No of TV">
+<input type="text" id="other" placeholder="Other Devices">
+
+<button onclick="saveDetails()">Save & Continue</button>
+
+</div>
+
+<script>
+function saveDetails(){
+
+const homeData = {
+rooms: document.getElementById("rooms").value,
+lights: document.getElementById("lights").value,
+fans: document.getElementById("fans").value,
+ac: document.getElementById("ac").value,
+tv: document.getElementById("tv").value,
+other: document.getElementById("other").value
+};
+
+localStorage.setItem("homeData", JSON.stringify(homeData));
+
+window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>

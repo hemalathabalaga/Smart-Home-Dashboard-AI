@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Home Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<script>
+// SECURITY CHECKS
+const user = JSON.parse(localStorage.getItem("user"));
+const homeData = JSON.parse(localStorage.getItem("homeData"));
+
+if (!user) {
+    window.location.href = "login.html";
+}
+
+if (!homeData) {
+    alert("Please complete setup first");
+    window.location.href = "signup.html";
+}
+</script>
+
+<div id="statusBox">Welcome</div>
+
+<div class="main">
+
+    <h1 id="welcomeUser"></h1>
+
+    <!-- DASHBOARD CARDS -->
+    <div class="cards">
+        <div>Total Devices: <span id="deviceCount"></span></div>
+        <div>Rooms: <span id="roomCount"></span></div>
+        <div>Lights: <span id="lightCount"></span></div>
+        <div>Fans: <span id="fanCount"></span></div>
+        <div>AC: <span id="acCount"></span></div>
+        <div>TV: <span id="tvCount"></span></div>
+        <div>Devices ON: <span id="onCount">0</span></div>
+<div>Devices OFF: <span id="offCount">0</span></div>
+    </div>
+
+    <!-- TEMPERATURE -->
+    <h2>🌡️ Temperature</h2>
+
+    <div class="temp-box">
+        <p>Living Room: 28°C</p>
+        <p>Bedroom: 26°C</p>
+        <p>Kitchen: 30°C</p>
+    </div>
+    <!-- DEVICE CONTROLS -->
+<h2>💡 Device Controls</h2>
+
+<div class="device-control-box">
+
+    <div class="device-row">
+        <span>Living Room Light</span>
+        <button onclick="toggleDevice(this)">OFF</button>
+    </div>
+
+    <div class="device-row">
+        <span>Bedroom Light</span>
+        <button onclick="toggleDevice(this)">OFF</button>
+    </div>
+
+    <div class="device-row">
+        <span>Kitchen Light</span>
+        <button onclick="toggleDevice(this)">OFF</button>
+    </div>
+
+    <div class="device-row">
+        <span>Living Room Fan</span>
+        <button onclick="toggleDevice(this)">OFF</button>
+    </div>
+
+    <div class="device-row">
+        <span>Bedroom Fan</span>
+        <button onclick="toggleDevice(this)">OFF</button>
+    </div>
+
+</div>
+    <!-- ENERGY GRAPH -->
+    <h2>⚡ Weekly Energy Consumption</h2>
+
+    <div class="chart-container">
+        <canvas id="energyChart"></canvas>
+    </div>
+
+    <!-- SECURITY CAMERA -->
+    <h2>📹 Security Camera</h2>
+
+    <div class="security-card">
+        <div class="security-header">
+            <h3>Security Camera</h3>
+            <span>View All</span>
+        </div>
+
+        <img src="security.jpeg" alt="Security Camera">
+
+        <div class="live-status">
+            🔴 LIVE
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+// USER DATA
+document.getElementById("welcomeUser").innerText =
+"Welcome, " + user.name;
+
+// COUNTS
+document.getElementById("roomCount").innerText = homeData.rooms;
+document.getElementById("lightCount").innerText = homeData.lights;
+document.getElementById("fanCount").innerText = homeData.fans;
+document.getElementById("acCount").innerText = homeData.ac;
+document.getElementById("tvCount").innerText = homeData.tv;
+
+const total =
+Number(homeData.lights || 0) +
+Number(homeData.fans || 0) +
+Number(homeData.ac || 0) +
+Number(homeData.tv || 0);
+
+document.getElementById("deviceCount").innerText = total;
+
+// ENERGY GRAPH
+const ctx = document.getElementById("energyChart");
+
+new Chart(ctx, {
+    type: "line",
+    data: {
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        datasets: [{
+            label: "Energy Usage (kWh)",
+            data: [10, 18, 13, 21, 17, 23, 19],
+            borderColor: "#4f46e5",
+            backgroundColor: "rgba(79,70,229,0.15)",
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+// LOGOUT
+function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+}
+
+// SESSION TIMER
+let timeout;
+
+function resetTimer() {
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+        alert("Session expired. Please login again.");
+        localStorage.removeItem("user");
+        window.location.href = "login.html";
+    }, 5 * 60 * 1000);
+}
+
+document.onmousemove = resetTimer;
+document.onkeydown = resetTimer;
+resetTimer();
+let onDevices = 0;
+let offDevices = 5;
+
+document.getElementById("onCount").innerText = onDevices;
+document.getElementById("offCount").innerText = offDevices;
+
+function toggleDevice(btn){
+
+    if(btn.innerText === "OFF"){
+
+        btn.innerText = "ON";
+        btn.style.background = "green";
+
+        onDevices++;
+        offDevices--;
+
+    }else{
+
+        btn.innerText = "OFF";
+        btn.style.background = "#4f46e5";
+
+        onDevices--;
+        offDevices++;
+
+    }
+
+    document.getElementById("onCount").innerText = onDevices;
+    document.getElementById("offCount").innerText = offDevices;
+}
+
+</script>
+
+</body>
+</html>
